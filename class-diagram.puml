@@ -1,0 +1,59 @@
+@startuml
+
+'Entity
+class TaskEntity {
+  - int|null id
+  - string|null title
+  - string|null description
+  - bool|null completed
+  - string|null createdAt
+  - string|null updatedAt
+  - string|null completedAt
+  + getId() : int|null
+  + setId( Int id ) : TaskEntity
+  + getTitle() : string|null
+  + setTitle( string title ) : TaskEntity
+  + getDescription() : string|null
+  + setDescription( string description ) : TaskEntity
+  + isCompleted() : bool
+  + setCompleted( bool completed ) : TaskEntity
+  + getCreatedAt() : string
+  + setCreatedAt( string createdAt ) : TaskEntity
+  + getUpdatedAt() : string
+  + setUpdatedAt( string updatedAt ) : TaskEntity
+  + getCompletedAt() : string
+  + setCompletedAt( string completedAt ) : TaskEntity
+}
+
+'Services
+note top of TaskServiceInterface : list() retourne un tableau [page: int, total: int, perPage:int, tasks: TaskEntity[]]
+
+interface TaskServiceInterface<<Singleton>> {
+  + get( int id ) : TaskEntity | null
+  + list ( array args ) : array
+  + create( TaskEntity task ) : TaskEntity
+  + update( TaskEntity task ) : TaskEntity
+  + delete( int id ) : void
+  + {static} getInstance() : TaskServiceInterface
+}
+
+class MemoryTaskService<<Singleton>> implements TaskServiceInterface {
+  - TaskEntity[] data
+}
+
+class DatabaseTaskService<<Singleton>> implements TaskServiceInterface {
+  - Database db
+  + construct( Database db )
+}
+
+'Common
+class Database <<Singleton>> {
+  - PDO db
+  + {static} getInstance() : Database
+}
+
+'Relations
+TaskEntity -right- TaskServiceInterface : fetches
+DatabaseTaskService -left- Database : uses
+
+@enduml
